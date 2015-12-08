@@ -18,15 +18,14 @@ public class FormularioActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_formulario);
 
-        this.helper = new FormularioHelper(this);
-
-//        Button salvar = (Button) findViewById(R.id.formulario_botao);
-//        salvar.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                finish();
-//            }
-//        });
+        if (getIntent().hasExtra(ListaAlunosActivity.ALUNO_SELECIONADO)) {
+            Aluno aluno = (Aluno) getIntent().getSerializableExtra(ListaAlunosActivity.ALUNO_SELECIONADO);
+            this.helper = new FormularioHelper(this, aluno);
+            helper.colocaNoFormulario(aluno);
+        }
+        else {
+            this.helper = new FormularioHelper(this, null);
+        }
     }
 
 
@@ -47,10 +46,14 @@ public class FormularioActivity extends ActionBarActivity {
         switch (id) {
             case R.id.formulario_menu_ok:
                 if (helper.isValido()) {
-//                    String nome = helper.pegaAlunoDoFormulario().getNome();
                     Aluno aluno = helper.pegaAlunoDoFormulario();
                     AlunoDAO dao = new AlunoDAO(this);
-                    dao.insere(aluno);
+                    if (aluno.getId() != null) {
+                        dao.insere(aluno);
+                    }
+                    else {
+                        dao.altera(aluno);
+                    }
                     dao.close();
                     finish();
                 }

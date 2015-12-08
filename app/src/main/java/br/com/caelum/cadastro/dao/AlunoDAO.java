@@ -45,6 +45,20 @@ public class AlunoDAO extends SQLiteOpenHelper {
     }
 
     public void insere(Aluno aluno) {
+        ContentValues values = getContentValues(aluno);
+
+        getWritableDatabase().insert(TABELA, null, values);
+    }
+
+    public void altera(Aluno aluno) {
+        ContentValues values = getContentValues(aluno);
+
+        String[] id = {aluno.getId().toString()};
+
+        getWritableDatabase().update(TABELA, values, "id = ?", id);
+    }
+
+    private ContentValues getContentValues(Aluno aluno) {
         ContentValues values = new ContentValues();
 
         values.put("nome", aluno.getNome());
@@ -52,29 +66,43 @@ public class AlunoDAO extends SQLiteOpenHelper {
         values.put("telefone", aluno.getTelefone());
         values.put("site", aluno.getSite());
         values.put("nota", aluno.getNota());
-
-        getWritableDatabase().insert(TABELA, null, values);
+        return values;
     }
 
     public List<Aluno> getLista() {
         List<Aluno> alunos = new ArrayList<>();
 
-        Cursor c = getReadableDatabase().rawQuery("SELECT * FROM " + TABELA + ";", null);
+        // A diferença entre getReadableDatabase() e getWritableDatabase() é que o último é mais lento,
+        // e usado para operações de escrita. Quando fizer leitura, usar o getReadableDatabase().
+        Cursor cursor = null;
 
-        while (c.moveToNext()) {
-            Aluno aluno = new Aluno();
+        try {
+            cursor = getReadableDatabase().rawQuery("SELECT * FROM " + TABELA + ";", null);
 
-            aluno.setId(c.getLong(c.getColumnIndex("id")));
-            aluno.setNome(c.getString(c.getColumnIndex("nome")));
-            aluno.setEndereco(c.getString(c.getColumnIndex("endereco")));
-            aluno.setTelefone(c.getString(c.getColumnIndex("telefone")));
-            aluno.setSite(c.getString(c.getColumnIndex("site")));
-            aluno.setSite(c.getString(c.getColumnIndex("nota")));
+            while (cursor.moveToNext()) {
+                Aluno aluno = new Aluno();
 
-            alunos.add(aluno);
+                aluno.setId(cursor.getLong(cursor.getColumnIndex("id")));
+                aluno.setNome(cursor.getString(cursor.getColumnIndex("nome")));
+                aluno.setEndereco(cursor.getString(cursor.getColumnIndex("endereco")));
+                aluno.setTelefone(cursor.getString(cursor.getColumnIndex("telefone")));
+                aluno.setSite(cursor.getString(cursor.getColumnIndex("site")));
+                aluno.setSite(cursor.getString(cursor.getColumnIndex("nota")));
+
+                alunos.add(aluno);
+            }
+        }
+        finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
 
-        c.close();
         return alunos;
+    }
+
+    public void delete(Aluno aluno) {
+        String[] id = {aluno.getId().toString()};
+        getWritableDatabase().delete(TABELA, "id = ?", id);
     }
 }

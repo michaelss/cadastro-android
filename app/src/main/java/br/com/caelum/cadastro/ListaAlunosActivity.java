@@ -1,6 +1,8 @@
 package br.com.caelum.cadastro;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -21,6 +23,8 @@ import br.com.caelum.cadastro.modelo.Aluno;
 
 
 public class ListaAlunosActivity extends ActionBarActivity {
+
+    public static final String ALUNO_SELECIONADO = "alunoSelecionado";
 
     private ListView listaAlunos;
     private List<Aluno> alunos;
@@ -47,10 +51,10 @@ public class ListaAlunosActivity extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Aluno aluno = (Aluno) parent.getItemAtPosition(position);
-                Toast.makeText(ctx, aluno.toString(), Toast.LENGTH_LONG).show();
-//                A linha abaixo faz o mesmo da de cima. ListaAlunosActivity.this pega o contexto da
-//                classe, não o da classe anônima atual.
-//                Toast.makeText(ListaAlunosActivity.this, aluno, Toast.LENGTH_LONG).show();
+
+                Intent edicao = new Intent(ListaAlunosActivity.this, FormularioActivity.class);
+                edicao.putExtra(ALUNO_SELECIONADO, aluno);
+                startActivity(edicao);
             }
         });
 
@@ -58,7 +62,7 @@ public class ListaAlunosActivity extends ActionBarActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(ListaAlunosActivity.this, "" + position, Toast.LENGTH_SHORT).show();
-                return true;
+                return false;
             }
         });
 
@@ -70,6 +74,8 @@ public class ListaAlunosActivity extends ActionBarActivity {
                 startActivity(novo);
             }
         });
+
+        registerForContextMenu(listaAlunos);
     }
 
     protected void onResume() {
@@ -82,6 +88,47 @@ public class ListaAlunosActivity extends ActionBarActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_lista_alunos, menu);
         return true;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        int position = info.position;
+
+        final Aluno alunoSelecionado = (Aluno) listaAlunos.getAdapter().getItem(position);
+
+        menu.add("Ligar");
+        menu.add("Enviar SMS");
+        menu.add("Achar no mapa");
+        menu.add("Navegar no site");
+        MenuItem deletar = menu.add("Deletar");
+
+        deletar.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                new AlertDialog.Builder(ListaAlunosActivity.this)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Deletar")
+                        .setMessage("Deseja mesmo deletar?")
+                        .setPositiveButton("Quero",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        AlunoDAO dao = new AlunoDAO(ListaAlunosActivity.this);
+                                        try {
+                                            dao.delete(alunoSelecionado);
+                                        } finally {
+                                            dao.close();
+                                        }
+                                        carregaLista();
+                                    }
+                                })
+                        .setNegativeButton("Não", null)
+                        .show();
+
+                        return false;
+                    }
+            });
     }
 
     @Override
