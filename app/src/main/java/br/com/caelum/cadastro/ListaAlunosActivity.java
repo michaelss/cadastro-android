@@ -2,8 +2,9 @@ package br.com.caelum.cadastro;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,29 +14,40 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.List;
+
+import br.com.caelum.cadastro.dao.AlunoDAO;
+import br.com.caelum.cadastro.modelo.Aluno;
+
 
 public class ListaAlunosActivity extends ActionBarActivity {
 
     private ListView listaAlunos;
+    private List<Aluno> alunos;
+
+    private void carregaLista() {
+        AlunoDAO dao = new AlunoDAO(this);
+        alunos = dao.getLista();
+        dao.close();
+
+        ArrayAdapter<Aluno> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, alunos);
+        listaAlunos.setAdapter(adapter);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_alunos);
 
-        String[] alunos = {"Anderson", "Filipe", "Guilherme"};
-        this.listaAlunos = (ListView) findViewById(R.id.lista_alunos);
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, alunos);
-        listaAlunos.setAdapter(adapter);
+        listaAlunos = (ListView) findViewById(R.id.lista_alunos);
 
         final Context ctx = this;
 
         listaAlunos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String aluno = (String) parent.getItemAtPosition(position);
-                Toast.makeText(ctx, aluno, Toast.LENGTH_LONG).show();
+                Aluno aluno = (Aluno) parent.getItemAtPosition(position);
+                Toast.makeText(ctx, aluno.toString(), Toast.LENGTH_LONG).show();
 //                A linha abaixo faz o mesmo da de cima. ListaAlunosActivity.this pega o contexto da
 //                classe, não o da classe anônima atual.
 //                Toast.makeText(ListaAlunosActivity.this, aluno, Toast.LENGTH_LONG).show();
@@ -58,6 +70,11 @@ public class ListaAlunosActivity extends ActionBarActivity {
                 startActivity(novo);
             }
         });
+    }
+
+    protected void onResume() {
+        super.onResume();
+        this.carregaLista();
     }
 
     @Override
