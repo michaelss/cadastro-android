@@ -23,7 +23,6 @@ public class AlunoDAO extends SQLiteOpenHelper {
 
     public AlunoDAO(Context context) {
         super(context, NOME_BD, null, VERSAO);
-
     }
 
     @Override
@@ -90,7 +89,8 @@ public class AlunoDAO extends SQLiteOpenHelper {
                 aluno.setEndereco(cursor.getString(cursor.getColumnIndex("endereco")));
                 aluno.setTelefone(cursor.getString(cursor.getColumnIndex("telefone")));
                 aluno.setSite(cursor.getString(cursor.getColumnIndex("site")));
-                aluno.setNota(cursor.getDouble(cursor.getColumnIndex("nota")));
+                aluno.setNota(cursor.getDouble(
+                        cursor.getColumnIndex("nota")));
 
                 alunos.add(aluno);
             }

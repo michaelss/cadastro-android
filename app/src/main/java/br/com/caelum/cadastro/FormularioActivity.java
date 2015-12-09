@@ -1,9 +1,17 @@
 package br.com.caelum.cadastro;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+
+import java.io.File;
 
 import br.com.caelum.cadastro.dao.AlunoDAO;
 import br.com.caelum.cadastro.modelo.Aluno;
@@ -12,6 +20,9 @@ import br.com.caelum.cadastro.modelo.Aluno;
 public class FormularioActivity extends ActionBarActivity {
 
     private FormularioHelper helper;
+    private String localArquivoFoto;
+
+    private static final int REQUEST_CODE_CAMERA = 123;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,8 +35,33 @@ public class FormularioActivity extends ActionBarActivity {
 
             this.helper.colocaNoFormulario(aluno);
         }
+
+        Button foto = helper.getFotoButton();
+        foto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                localArquivoFoto = getExternalFilesDir(null) + "/" + System.currentTimeMillis() + ".jpg";
+                Intent irParaCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                Uri localFoto = Uri.fromFile(new File(localArquivoFoto));
+                irParaCamera.putExtra(MediaStore.EXTRA_OUTPUT, localFoto);
+
+                startActivityForResult(irParaCamera, REQUEST_CODE_CAMERA);
+            }
+        });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == REQUEST_CODE_CAMERA) {
+            if (resultCode == Activity.RESULT_OK) {
+                helper.carregaImagem(this.localArquivoFoto);
+            }
+            else {
+                this.localArquivoFoto = null;
+            }
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

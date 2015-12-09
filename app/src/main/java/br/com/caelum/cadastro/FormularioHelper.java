@@ -1,6 +1,10 @@
 package br.com.caelum.cadastro;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 
 import br.com.caelum.cadastro.modelo.Aluno;
@@ -15,6 +19,8 @@ public class FormularioHelper {
     private EditText telefone;
     private EditText site;
     private RatingBar nota;
+    private ImageView foto;
+    private Button fotoButton;
 
     private Aluno aluno;
 
@@ -27,6 +33,8 @@ public class FormularioHelper {
         this.telefone = (EditText) formularioActivity.findViewById(R.id.formulario_phone);
         this.site = (EditText) formularioActivity.findViewById(R.id.formulario_site);
         this.nota = (RatingBar) formularioActivity.findViewById(R.id.formulario_stars);
+        this.foto = (ImageView) formularioActivity.findViewById(R.id.formulario_foto);
+        this.fotoButton = (Button) formularioActivity.findViewById(R.id.formulario_foto_button);
     }
 
     public Aluno pegaAlunoDoFormulario() {
@@ -58,5 +66,17 @@ public class FormularioHelper {
 
     public void mostraErro() {
         this.nome.setError("Campo nome obrigatório");
+    }
+
+    public Button getFotoButton() {
+        return fotoButton;
+    }
+
+    public void carregaImagem(String localArquivoFoto) {
+        Bitmap imagemFoto = BitmapFactory.decodeFile(localArquivoFoto);
+        Bitmap imagemFotoReduzida = Bitmap.createScaledBitmap(imagemFoto, imagemFoto.getWidth(), 300, true);
+
+        foto.setImageBitmap(imagemFotoReduzida);
+        foto.setTag(localArquivoFoto);
     }
 }
