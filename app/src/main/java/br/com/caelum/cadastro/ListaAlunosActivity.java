@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.ContextMenu;
@@ -97,13 +98,50 @@ public class ListaAlunosActivity extends ActionBarActivity {
 
         final Aluno alunoSelecionado = (Aluno) listaAlunos.getAdapter().getItem(position);
 
-        menu.add("Ligar");
-        menu.add("Enviar SMS");
-        menu.add("Achar no mapa");
-        menu.add("Navegar no site");
+        MenuItem ligar = menu.add("Ligar");
+        MenuItem sms = menu.add("Enviar SMS");
+        MenuItem mapa = menu.add("Achar no mapa");
+        MenuItem navegar = menu.add("Navegar no site");
         MenuItem deletar = menu.add("Deletar");
 
-        deletar.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        ligar(ligar, alunoSelecionado);
+        enviarSMS(sms, alunoSelecionado);
+        abrirMapa(mapa, alunoSelecionado);
+        navegar(navegar, alunoSelecionado);
+        deletar(deletar, alunoSelecionado);
+    }
+
+    private void ligar(MenuItem menuItem, Aluno aluno) {
+        Intent intent = new Intent(Intent.ACTION_CALL);
+        intent.setData(Uri.parse("tel:" + aluno.getTelefone()));
+        menuItem.setIntent(intent);
+    }
+
+    private void enviarSMS(MenuItem menuItem, Aluno aluno) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("sms:" + aluno.getTelefone()));
+        menuItem.setIntent(intent);
+    }
+
+    private void abrirMapa(MenuItem menuItem, Aluno aluno) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("geo:0,0?z=14&q=:" + aluno.getEndereco()));
+        menuItem.setIntent(intent);
+    }
+
+    private void navegar(MenuItem menuItem, Aluno aluno) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        String site = aluno.getSite();
+
+        if (!site.startsWith("http://")) {
+            site = "http://" + site;
+        }
+        intent.setData(Uri.parse(site));
+        menuItem.setIntent(intent);
+    }
+
+    private void deletar(MenuItem menuItem, final Aluno alunoSelecionado) {
+        menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 new AlertDialog.Builder(ListaAlunosActivity.this)

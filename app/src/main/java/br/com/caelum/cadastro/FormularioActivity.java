@@ -59,6 +59,9 @@ public class FormularioActivity extends ActionBarActivity {
                     this.helper.mostraErro();
                 }
                 return true;
+            case R.id.formulario_menu_cancelar:
+                finish();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
