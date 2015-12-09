@@ -18,9 +18,9 @@ public class FormularioHelper {
 
     private Aluno aluno;
 
-    public FormularioHelper(FormularioActivity formularioActivity, Aluno aluno) {
+    public FormularioHelper(FormularioActivity formularioActivity) {
 
-        this.aluno = (aluno == null) ? new Aluno() : aluno;
+        this.aluno = new Aluno();
 
         this.nome = (EditText) formularioActivity.findViewById(R.id.formulario_name);
         this.endereco = (EditText) formularioActivity.findViewById(R.id.formulario_address);
@@ -30,23 +30,23 @@ public class FormularioHelper {
     }
 
     public Aluno pegaAlunoDoFormulario() {
-        aluno.setNome(this.nome.getText().toString());
-        aluno.setEndereco(this.endereco.getText().toString());
-        aluno.setTelefone(this.telefone.getText().toString());
-        aluno.setSite(this.site.getText().toString());
-        aluno.setNota((double)this.nota.getProgress());
+        this.aluno.setNome(this.nome.getText().toString());
+        this.aluno.setEndereco(this.endereco.getText().toString());
+        this.aluno.setTelefone(this.telefone.getText().toString());
+        this.aluno.setSite(this.site.getText().toString());
+        this.aluno.setNota((double)this.nota.getProgress());
 
-        return aluno;
+        return this.aluno;
     }
 
     public void colocaNoFormulario(Aluno aluno) {
-        this.nome.setText(aluno.getNome());
-        this.endereco.setText(aluno.getEndereco());
-        this.telefone.setText(aluno.getTelefone());
-        this.site.setText(aluno.getSite());
-        this.nota.setProgress((aluno.getNota() != null) ? aluno.getNota().intValue() : 0);
-
         this.aluno = aluno;
+
+        this.nome.setText(this.aluno.getNome());
+        this.endereco.setText(this.aluno.getEndereco());
+        this.telefone.setText(this.aluno.getTelefone());
+        this.site.setText(this.aluno.getSite());
+        this.nota.setProgress((this.aluno.getNota() != null) ? this.aluno.getNota().intValue() : 0);
     }
 
     public boolean isValido() {

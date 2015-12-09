@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ public class AlunoDAO extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sql = "CREATE TABLE " + TABELA + " (id INTEGER PRIMARY KEY," +
+        String sql = "CREATE TABLE " + TABELA + " (id INTEGER PRIMARY KEY, " +
                 " nome TEXT NOT NULL," +
                 " telefone TEXT," +
                 " endereco TEXT," +
@@ -52,6 +53,8 @@ public class AlunoDAO extends SQLiteOpenHelper {
 
     public void altera(Aluno aluno) {
         ContentValues values = getContentValues(aluno);
+
+        Log.i("AlunoDAO", "nota: " + aluno.getNota());
 
         String[] id = {aluno.getId().toString()};
 
@@ -87,7 +90,7 @@ public class AlunoDAO extends SQLiteOpenHelper {
                 aluno.setEndereco(cursor.getString(cursor.getColumnIndex("endereco")));
                 aluno.setTelefone(cursor.getString(cursor.getColumnIndex("telefone")));
                 aluno.setSite(cursor.getString(cursor.getColumnIndex("site")));
-                aluno.setSite(cursor.getString(cursor.getColumnIndex("nota")));
+                aluno.setNota(cursor.getDouble(cursor.getColumnIndex("nota")));
 
                 alunos.add(aluno);
             }
