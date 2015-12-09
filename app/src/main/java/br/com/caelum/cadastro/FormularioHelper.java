@@ -43,6 +43,7 @@ public class FormularioHelper {
         this.aluno.setTelefone(this.telefone.getText().toString());
         this.aluno.setSite(this.site.getText().toString());
         this.aluno.setNota((double)this.nota.getProgress());
+        this.aluno.setCaminhoFoto((String)this.foto.getTag());
 
         return this.aluno;
     }
@@ -55,6 +56,9 @@ public class FormularioHelper {
         this.telefone.setText(this.aluno.getTelefone());
         this.site.setText(this.aluno.getSite());
         this.nota.setProgress((this.aluno.getNota() != null) ? this.aluno.getNota().intValue() : 0);
+        if (aluno.getCaminhoFoto() != null) {
+            carregaImagem(this.aluno.getCaminhoFoto());
+        }
     }
 
     public boolean isValido() {

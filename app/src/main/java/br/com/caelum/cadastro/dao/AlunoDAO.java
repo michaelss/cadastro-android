@@ -17,7 +17,7 @@ import br.com.caelum.cadastro.modelo.Aluno;
  */
 public class AlunoDAO extends SQLiteOpenHelper {
 
-    private final static int VERSAO = 1;
+    private final static int VERSAO = 2;
     private final static String TABELA = "Alunos";
     private final static String NOME_BD = "CadastroCaelum";
 
@@ -32,16 +32,19 @@ public class AlunoDAO extends SQLiteOpenHelper {
                 " telefone TEXT," +
                 " endereco TEXT," +
                 " site TEXT," +
-                " nota REAL);";
+                " nota REAL," +
+                " caminhoFoto TEXT);";
 
         db.execSQL(sql);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, final int oldVersion, final int newVersion) {
-        String sql = "DROP TABLE IF EXISTS " + TABELA + ";";
-        db.execSQL(sql);
-        onCreate(db);
+        String sql = "ALTER TABLE " + TABELA + " ADD COLUMN caminhoFoto text;";
+        switch(oldVersion) {
+            case 1:
+                db.execSQL(sql);
+        }
     }
 
     public void insere(Aluno aluno) {
@@ -68,6 +71,7 @@ public class AlunoDAO extends SQLiteOpenHelper {
         values.put("telefone", aluno.getTelefone());
         values.put("site", aluno.getSite());
         values.put("nota", aluno.getNota());
+        values.put("caminhoFoto", aluno.getCaminhoFoto());
         return values;
     }
 
@@ -91,6 +95,7 @@ public class AlunoDAO extends SQLiteOpenHelper {
                 aluno.setSite(cursor.getString(cursor.getColumnIndex("site")));
                 aluno.setNota(cursor.getDouble(
                         cursor.getColumnIndex("nota")));
+                aluno.setCaminhoFoto(cursor.getString(cursor.getColumnIndex("caminhoFoto")));
 
                 alunos.add(aluno);
             }
