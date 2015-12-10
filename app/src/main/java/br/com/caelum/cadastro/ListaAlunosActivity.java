@@ -20,8 +20,10 @@ import android.widget.Toast;
 import java.util.List;
 
 import br.com.caelum.cadastro.adapter.ListaAlunosAdapter;
+import br.com.caelum.cadastro.converter.AlunoConverter;
 import br.com.caelum.cadastro.dao.AlunoDAO;
 import br.com.caelum.cadastro.modelo.Aluno;
+import br.com.caelum.cadastro.support.WebClient;
 
 
 public class ListaAlunosActivity extends ActionBarActivity {
@@ -177,9 +179,18 @@ public class ListaAlunosActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case  R.id.menu_enviar_notas:
+                AlunoDAO dao = new AlunoDAO(this);
+                List<Aluno> alunos = dao.getLista();
+                dao.close();
+
+                String json = new AlunoConverter().toJson(alunos);
+                WebClient client = new WebClient();
+                String resposta = client.post(json);
+                Toast.makeText(this, resposta, Toast.LENGTH_LONG).show();
+
+                return true;
         }
 
         return super.onOptionsItemSelected(item);

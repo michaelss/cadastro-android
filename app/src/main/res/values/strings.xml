@@ -9,5 +9,6 @@
     <string name="name">Nome</string>
     <string name="address">Endereço</string>
     <string name="site">Site</string>
+    <string name="menu_enviar_notas">Enviar notas</string>
 
 </resources>
