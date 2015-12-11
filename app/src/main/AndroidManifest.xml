@@ -19,6 +19,10 @@
             android:name=".FormularioActivity"
             android:label="@string/title_activity_formulario" >
         </activity>
+        <activity
+            android:name=".ProvasActivity"
+            android:label="@string/title_activity_provas" >
+        </activity>
         <receiver android:name="br.com.caelum.cadastro.receiver.SMSReceiver"
             android:enabled="true">
             <intent-filter>

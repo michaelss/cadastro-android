@@ -82,5 +82,6 @@ public class FormularioHelper {
 
         foto.setImageBitmap(imagemFotoReduzida);
         foto.setTag(localArquivoFoto);
+        foto.setScaleType(ImageView.ScaleType.FIT_XY);
     }
 }

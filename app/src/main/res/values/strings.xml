@@ -10,5 +10,7 @@
     <string name="address">Endereço</string>
     <string name="site">Site</string>
     <string name="menu_enviar_notas">Enviar notas</string>
+    <string name="menu_receber_provas">Receber provas</string>
+    <string name="title_activity_provas">Provas</string>
 
 </resources>
