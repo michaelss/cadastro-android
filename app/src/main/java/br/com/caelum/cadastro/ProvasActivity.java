@@ -51,6 +51,10 @@ public class ProvasActivity extends ActionBarActivity {
 
             FragmentTransaction transaction = manager.beginTransaction();
             transaction.replace(R.id.provas_view, detalhesProva);
+
+            // Passar null indica que é voltar para o fragment anterior.
+            transaction.addToBackStack(null);
+
             transaction.commit();
         }
 
